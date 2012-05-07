@@ -1,5 +1,4 @@
 open import Relation.Binary
-open import Level
 
 module FreeGroups {c ℓ} (S : Setoid c ℓ) where
 
