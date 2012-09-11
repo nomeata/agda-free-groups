@@ -112,13 +112,15 @@ eqSetoid  _⟶_ = record {
 -- reflexive symmetric hull.
 --
 
+liftEqCl : ∀{c d ℓ ℓ2} → {A : Set c} → {B : Setoid d ℓ} → {T : Rel A ℓ2} → {f : A → Setoid.Carrier B } → T =[ f ]⇒ Setoid._≈_ B → EqCl T =[ f ]⇒ Setoid._≈_ B
+liftEqCl p (impEq y) = p y
+liftEqCl {B = B} p (symEq y) = Setoid.sym B (liftEqCl {B = B} p y)
+liftEqCl {B = B} p reflEq = Setoid.refl B
+liftEqCl {B = B} p (transEq y y') = Setoid.trans B (liftEqCl {B = B} p y) (liftEqCl {B = B} p y')
+
 mapEq : ∀{ℓ} → {A : Set ℓ} → {T : Rel A ℓ} → {f : A → A } →
       T =[ f ]⇒ T → EqCl T =[ f ]⇒ EqCl T
-mapEq p (impEq y) = impEq (p y)
-mapEq p (symEq y) = symEq (mapEq p y)
-mapEq p reflEq = reflEq
-mapEq p (transEq y' y0) = transEq (mapEq p y') (mapEq p y0)
-
+mapEq {T = T} p = liftEqCl {B = eqSetoid T} (impEq ∘ p)
 
 --
 -- Utility lemmata that went into the standard library, but has not released yet.
